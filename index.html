@@ -44,38 +44,43 @@
 
     function initApp() {
       window.checkDennys = function() {
-        const address = document.getElementById("address").value;
-        const resultDiv = document.getElementById("result");
-        resultDiv.innerText = "Checking...";
+  const addressInput = document.getElementById("address").value.trim();
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerText = "Checking...";
 
-        const geocoder = new google.maps.Geocoder();
+  const forcedAddress = "123 Main St, Springfield, IL"; // Replace with the specific address
+  if (addressInput.toLowerCase() === forcedAddress.toLowerCase()) {
+    resultDiv.innerText = "Yes! That's a Denny's.";
+    return;
+  }
 
-        geocoder.geocode({ address }, function(results, status) {
-          if (status !== "OK") {
-            resultDiv.innerText = "Couldn't find that address.";
-            return;
-          }
+  const geocoder = new google.maps.Geocoder();
 
-          const location = results[0].geometry.location;
-          const map = new google.maps.Map(document.createElement("div")); // dummy map
-          const service = new google.maps.places.PlacesService(map);
-
-          const request = {
-            location: location,
-            radius: 50,
-            keyword: "Denny's"
-          };
-
-          service.nearbySearch(request, function(results, status) {
-            if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
-              resultDiv.innerText = "Yes! That's a Denny's.";
-            } else {
-              resultDiv.innerText = "Nope, not a Denny's.";
-            }
-          });
-        });
-      };
+  geocoder.geocode({ address: addressInput }, function(results, status) {
+    if (status !== "OK") {
+      resultDiv.innerText = "Couldn't find that address.";
+      return;
     }
+
+    const location = results[0].geometry.location;
+    const map = new google.maps.Map(document.createElement("div")); // dummy map
+    const service = new google.maps.places.PlacesService(map);
+
+    const request = {
+      location: location,
+      radius: 50,
+      keyword: "Denny's"
+    };
+
+    service.nearbySearch(request, function(results, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+        resultDiv.innerText = "Yes! That's a Denny's.";
+      } else {
+        resultDiv.innerText = "Nope, not a Denny's.";
+      }
+    });
+  });
+};
   </script>
 </body>
 </html>
